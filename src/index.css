@@ -16,7 +16,7 @@
 }
 
 html {
-  font-size: clamp(15px, 3.8vw, 17.6px);
+  font-size: clamp(16px, 3.8vw, 17.6px);
   overflow-anchor: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -98,17 +98,6 @@ body::after {
   border-color: #00ff88;
   background: #0f1a14;
   color: #00ff88;
-}
-
-/* iOS Safari: 16px 미만 포커스 시 자동 확대 → 방 전환 후에도 배율 유지됨 */
-@media (max-width: 639px) {
-  button,
-  input,
-  textarea,
-  select,
-  .choice-btn {
-    font-size: 16px;
-  }
 }
 
 /* Choice button */
@@ -215,4 +204,16 @@ body::after {
 ::-webkit-scrollbar-thumb {
   background: #333;
   border-radius: 2px;
+}
+
+/* iOS Safari: Tailwind text-sm/xs가 16px 규칙을 덮어 포커스 줌 유발 — 파일 맨 아래 + !important */
+@media (max-width: 639px) {
+  button,
+  input,
+  textarea,
+  select,
+  .choice-btn,
+  .tag-chip-btn {
+    font-size: 16px !important;
+  }
 }

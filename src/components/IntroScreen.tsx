@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TypeWriter } from './TypeWriter'
+import { scrollToTop } from '../utils/scrollToTop'
 
 interface IntroScreenProps {
   onIntroComplete: () => void
@@ -69,9 +70,7 @@ export function IntroScreen({ onIntroComplete }: IntroScreenProps) {
 
             <motion.button
               onClick={handleTitleClick}
-              className="mono text-sm tracking-widest px-10 py-3 min-h-[44px] w-full max-w-xs border border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-all duration-200"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="mono tracking-widest px-10 py-3 min-h-[44px] w-full max-w-xs border border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-all duration-200"
             >
               START_EXPERIMENT.exe
             </motion.button>
@@ -139,10 +138,11 @@ export function IntroScreen({ onIntroComplete }: IntroScreenProps) {
                 className="mt-8 text-center"
               >
                 <motion.button
-                  onClick={onIntroComplete}
-                  className="mono text-sm tracking-widest px-12 py-3 min-h-[44px] w-full max-w-xs border border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-all duration-200"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    scrollToTop()
+                    onIntroComplete()
+                  }}
+                  className="mono tracking-widest px-12 py-3 min-h-[44px] w-full max-w-xs border border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-all duration-200"
                 >
                   ▶  다음
                 </motion.button>

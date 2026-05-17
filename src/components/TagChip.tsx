@@ -30,7 +30,6 @@ function TagChip({ label, className = '', active, onToggle }: SingleTagChipProps
         onMouseLeave={() => setHovered(false)}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
-        whileTap={{ scale: 0.98 }}
       >
         {label}
       </motion.button>

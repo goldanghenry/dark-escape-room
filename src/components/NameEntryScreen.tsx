@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { scrollToTop } from '../utils/scrollToTop'
 
 interface NameEntryScreenProps {
   onSubmit: (name: string) => void
@@ -20,6 +21,8 @@ export function NameEntryScreen({ onSubmit }: NameEntryScreenProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (trimmed.length === 0) return
+    inputRef.current?.blur()
+    scrollToTop()
     onSubmit(trimmed)
   }
 
@@ -77,9 +80,7 @@ export function NameEntryScreen({ onSubmit }: NameEntryScreenProps) {
             <motion.button
               type="submit"
               disabled={trimmed.length === 0}
-              className="w-full mono text-sm tracking-widest py-3 min-h-[44px] border border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              whileHover={trimmed.length > 0 ? { scale: 1.01 } : {}}
-              whileTap={trimmed.length > 0 ? { scale: 0.98 } : {}}
+              className="w-full mono tracking-widest py-3 min-h-[44px] border border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               ▶  실험 시작
             </motion.button>
