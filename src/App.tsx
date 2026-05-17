@@ -30,6 +30,8 @@ export default function App() {
 
   useLayoutEffect(() => {
     scrollToTop()
+    const id = requestAnimationFrame(() => scrollToTop())
+    return () => cancelAnimationFrame(id)
   }, [state.phase, state.currentRoomIndex])
 
   const personalizedRoom = useMemo(

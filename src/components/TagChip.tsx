@@ -20,7 +20,7 @@ function TagChip({ label, className = '', active, onToggle }: SingleTagChipProps
         type="button"
         aria-expanded={open}
         aria-label={`${label} 태그 설명`}
-        className={`tag-chip-btn inline-block px-2.5 py-1.5 rounded border text-xs mono cursor-pointer transition-colors min-h-[36px] ${
+        className={`tag-chip-btn inline-block rounded border mono cursor-pointer transition-colors ${
           open
             ? 'border-green-400/80 bg-green-400/15 text-green-300'
             : 'border-gray-700/80 bg-gray-900/40 text-gray-500'
@@ -42,11 +42,11 @@ function TagChip({ label, className = '', active, onToggle }: SingleTagChipProps
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 bottom-full mb-1 z-50 w-64 max-w-[min(16rem,calc(100vw-2rem))] sm:max-w-[16rem]"
+            className="absolute left-0 bottom-full mb-1 z-50 w-56 max-w-[min(14rem,calc(100vw-2rem))] sm:max-w-[14rem]"
           >
-            <div className="rounded border border-green-400/60 bg-gray-950/95 px-3 py-2 shadow-lg shadow-black/40">
-              <p className="text-xs text-gray-200 leading-relaxed">{description}</p>
-            </div>
+            <motion.div className="rounded border border-green-400/60 bg-gray-950/95 px-2 py-1.5 shadow-lg shadow-black/40">
+              <p className="text-[0.65rem] sm:text-xs text-gray-200 leading-relaxed">{description}</p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -80,7 +80,7 @@ export function TagChips({ tagString, className = '' }: TagChipsProps) {
   }
 
   return (
-    <div className={`flex flex-wrap gap-2 ${className}`}>
+    <motion.div className={`flex flex-wrap gap-1.5 ${className}`}>
       {parts.map(part => (
         <TagChip
           key={part}
@@ -89,6 +89,6 @@ export function TagChips({ tagString, className = '' }: TagChipsProps) {
           onToggle={handleToggle}
         />
       ))}
-    </div>
+    </motion.div>
   )
 }

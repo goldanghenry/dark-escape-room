@@ -1,9 +1,9 @@
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { type Room } from '../data/rooms'
 import { TypeWriter } from './TypeWriter'
 import { TagChips } from './TagChip'
-import { scrollToTop } from '../utils/scrollToTop'
+import { scrollToElement, scrollToTop } from '../utils/scrollToTop'
 
 interface RoomScreenProps {
   room: Room
@@ -41,9 +41,12 @@ export function RoomScreen({
 }: RoomScreenProps) {
   const [phase, setPhase] = useState<'unlock' | 'typing' | 'choices' | 'comment'>('unlock')
   const isLastRoom = roomIndex === totalRooms - 1
+  const topRef = useRef<HTMLDivElement>(null)
+  const nextButtonRef = useRef<HTMLButtonElement>(null)
 
   useLayoutEffect(() => {
     scrollToTop()
+    topRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' })
   }, [room.id])
 
   useEffect(() => {
@@ -53,31 +56,62 @@ export function RoomScreen({
     return () => clearTimeout(t)
   }, [room.id])
 
+  useEffect(() => {
+    if (phase !== 'comment') return
+    const t = setTimeout(() => {
+      const btn = nextButtonRef.current
+      if (!btn) return
+      btn.focus({ preventScroll: false })
+      scrollToElement(btn, { behavior: 'smooth', block: 'end' })
+    }, 500)
+    return () => clearTimeout(t)
+  }, [phase, room.id, selectedChoice])
+
   const handleChoiceClick = (idx: number) => {
     onChoiceSelect(room.id, idx)
-    if (phase !== 'comment') setPhase('comment')
+    if (phase !== 'comment') {
+      setPhase('comment')
+    } else {
+      requestAnimationFrame(() => {
+        const btn = nextButtonRef.current
+        btn?.focus({ preventScroll: false })
+        scrollToElement(btn, { behavior: 'smooth', block: 'end' })
+      })
+    }
+  }
+
+  const handleNext = () => {
+    scrollToTop()
+    onNext()
+  }
+
+  const handlePrev = () => {
+    scrollToTop()
+    onPrev()
   }
 
   const randomReaction = SYSTEM_REACTIONS[room.id % SYSTEM_REACTIONS.length]
 
   return (
     <motion.div className="min-h-screen flex flex-col">
-      <div className="border-b border-gray-800 px-3 sm:px-4 py-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <span className="mono text-xs text-gray-600 shrink-0 hidden sm:inline">DARK_PSYCH_LAB</span>
-          <span className="text-gray-700 hidden sm:inline">|</span>
-          <span className="mono text-xs text-green-400 shrink-0">
-            ROOM_{String(room.id).padStart(2, '0')}
+      <motion.div ref={topRef} id="room-top" className="shrink-0 scroll-mt-0" tabIndex={-1}>
+        <motion.div className="border-b border-gray-800 px-3 sm:px-4 py-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <motion.div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <span className="mono text-xs text-gray-600 shrink-0 hidden sm:inline">DARK_PSYCH_LAB</span>
+            <span className="text-gray-700 hidden sm:inline">|</span>
+            <span className="mono text-xs text-green-400 shrink-0">
+              ROOM_{String(room.id).padStart(2, '0')}
+            </span>
+          </motion.div>
+          <span className="mono text-xs text-gray-600 truncate sm:text-right w-full sm:w-auto">
+            {playerName}씨 · {roomIndex + 1} / {totalRooms}
           </span>
-        </div>
-        <span className="mono text-xs text-gray-600 truncate sm:text-right w-full sm:w-auto">
-          {playerName}씨 · {roomIndex + 1} / {totalRooms}
-        </span>
-      </div>
+        </motion.div>
 
-      <div className="progress-track">
-        <div className="progress-fill" style={{ width: `${progress * 100}%` }} />
-      </div>
+        <div className="progress-track">
+          <motion.div className="progress-fill" style={{ width: `${progress * 100}%` }} />
+        </div>
+      </motion.div>
 
       <div className="flex-1 flex flex-col items-center justify-start px-3 sm:px-4 py-6 sm:py-8 max-w-2xl mx-auto w-full pb-[max(1rem,env(safe-area-inset-bottom))]">
         <AnimatePresence>
@@ -119,7 +153,7 @@ export function RoomScreen({
             animate={{ opacity: 1 }}
             className="w-full mb-6"
           >
-            <div className="border-l-2 border-gray-700 pl-4 py-1">
+            <motion.div className="border-l-2 border-gray-700 pl-4 py-1">
               {phase === 'typing' ? (
                 <TypeWriter
                   lines={room.situation}
@@ -136,7 +170,7 @@ export function RoomScreen({
                   ))}
                 </motion.div>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         )}
 
@@ -159,7 +193,7 @@ export function RoomScreen({
               <button
                 key={idx}
                 type="button"
-                className={`choice-btn text-sm sm:text-base ${selectedChoice === idx ? 'selected' : ''}`}
+                className={`choice-btn ${selectedChoice === idx ? 'selected' : ''}`}
                 onClick={() => handleChoiceClick(idx)}
               >
                 {choice.label}
@@ -193,15 +227,16 @@ export function RoomScreen({
               {canGoBack && (
                 <button
                   type="button"
-                  onClick={onPrev}
+                  onClick={handlePrev}
                   className="mono text-base sm:text-xs tracking-widest px-6 py-3 min-h-[44px] w-full sm:w-auto border border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300 transition-all"
                 >
                   ◀ 이전 방
                 </button>
               )}
               <button
+                ref={nextButtonRef}
                 type="button"
-                onClick={onNext}
+                onClick={handleNext}
                 className="mono text-base sm:text-xs tracking-widest px-8 py-3 min-h-[44px] w-full sm:w-auto border border-gray-600 text-gray-400 hover:border-green-400 hover:text-green-400 transition-all"
               >
                 {isLastRoom ? '결과 보기 ▶' : '다음 방으로 ▶'}
