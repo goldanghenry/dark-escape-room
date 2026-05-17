@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useLayoutEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useGameState } from './hooks/useGameState'
 import { IntroScreen } from './components/IntroScreen'
@@ -7,6 +7,7 @@ import { RoomScreen } from './components/RoomScreen'
 import { ResultScreen } from './components/ResultScreen'
 import { ROOM_COUNT } from './data/rooms'
 import { applyPlayerNameToRoom } from './utils/applyPlayerNameToRoom'
+import { scrollToTop } from './utils/scrollToTop'
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -26,6 +27,10 @@ export default function App() {
     prevRoom,
     restart,
   } = useGameState()
+
+  useLayoutEffect(() => {
+    scrollToTop()
+  }, [state.phase, state.currentRoomIndex])
 
   const personalizedRoom = useMemo(
     () =>

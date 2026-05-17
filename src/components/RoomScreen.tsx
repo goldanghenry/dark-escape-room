@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { type Room } from '../data/rooms'
 import { TypeWriter } from './TypeWriter'
 import { TagChips } from './TagChip'
+import { scrollToTop } from '../utils/scrollToTop'
 
 interface RoomScreenProps {
   room: Room
@@ -40,6 +41,10 @@ export function RoomScreen({
 }: RoomScreenProps) {
   const [phase, setPhase] = useState<'unlock' | 'typing' | 'choices' | 'comment'>('unlock')
   const isLastRoom = roomIndex === totalRooms - 1
+
+  useLayoutEffect(() => {
+    scrollToTop()
+  }, [room.id])
 
   useEffect(() => {
     setPhase('unlock')
@@ -189,7 +194,7 @@ export function RoomScreen({
                 <button
                   type="button"
                   onClick={onPrev}
-                  className="mono text-xs tracking-widest px-6 py-3 min-h-[44px] w-full sm:w-auto border border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300 transition-all"
+                  className="mono text-base sm:text-xs tracking-widest px-6 py-3 min-h-[44px] w-full sm:w-auto border border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300 transition-all"
                 >
                   ◀ 이전 방
                 </button>
@@ -197,7 +202,7 @@ export function RoomScreen({
               <button
                 type="button"
                 onClick={onNext}
-                className="mono text-xs tracking-widest px-8 py-3 min-h-[44px] w-full sm:w-auto border border-gray-600 text-gray-400 hover:border-green-400 hover:text-green-400 transition-all"
+                className="mono text-base sm:text-xs tracking-widest px-8 py-3 min-h-[44px] w-full sm:w-auto border border-gray-600 text-gray-400 hover:border-green-400 hover:text-green-400 transition-all"
               >
                 {isLastRoom ? '결과 보기 ▶' : '다음 방으로 ▶'}
               </button>
