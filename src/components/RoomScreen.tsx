@@ -159,7 +159,7 @@ export function RoomScreen({
               <button
                 key={idx}
                 type="button"
-                className={`choice-btn ${selectedChoice === idx ? 'selected' : ''}`}
+                className={`choice-btn text-sm sm:text-base ${selectedChoice === idx ? 'selected' : ''}`}
                 onClick={() => handleChoiceClick(idx)}
               >
                 {choice.label}
@@ -193,22 +193,16 @@ export function RoomScreen({
               {canGoBack && (
                 <button
                   type="button"
-                  onClick={() => {
-                    scrollToTop()
-                    onPrev()
-                  }}
-                  className="mono tracking-widest px-6 py-3 min-h-[44px] w-full sm:w-auto border border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300 transition-all"
+                  onClick={onPrev}
+                  className="mono text-base sm:text-xs tracking-widest px-6 py-3 min-h-[44px] w-full sm:w-auto border border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300 transition-all"
                 >
                   ◀ 이전 방
                 </button>
               )}
               <button
                 type="button"
-                onClick={() => {
-                  scrollToTop()
-                  onNext()
-                }}
-                className="mono tracking-widest px-8 py-3 min-h-[44px] w-full sm:w-auto border border-gray-600 text-gray-400 hover:border-green-400 hover:text-green-400 transition-all"
+                onClick={onNext}
+                className="mono text-base sm:text-xs tracking-widest px-8 py-3 min-h-[44px] w-full sm:w-auto border border-gray-600 text-gray-400 hover:border-green-400 hover:text-green-400 transition-all"
               >
                 {isLastRoom ? '결과 보기 ▶' : '다음 방으로 ▶'}
               </button>
